@@ -7,18 +7,19 @@ import { Audio } from "expo-av";
 import { extractMediaPathsFromItem } from "../utils/extractMediaPathsFromItem";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import { useTranslation } from "react-i18next";
 
 export function MonumentDetailScreen() {
   const navigation = useNavigation();
   const route = useRoute<any>();
   const { item } = route.params || {};
+  const { t } = useTranslation();
 
   const screenWidth = Dimensions.get('window').width;
   const flatListRef = useRef<FlatList>(null);
 
   const [images, setImages] = useState<string[]>([]);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -29,14 +30,11 @@ export function MonumentDetailScreen() {
   const [forwardOpacity] = useState(new Animated.Value(1));
 
   useEffect(() => {
-    let isMounted = true;
     let currentSound: Audio.Sound | null = null;
 
     const loadMedia = async () => {
       const netInfo = await NetInfo.fetch();
-    
       if (!netInfo.isConnected || netInfo.type !== 'wifi') {
-        // Zkus načíst z AsyncStorage
         const stored = await AsyncStorage.getItem(`monument_${item.id}_media`);
         if (stored) {
           const localMedia = JSON.parse(stored);
@@ -45,8 +43,7 @@ export function MonumentDetailScreen() {
           return;
         }
       }
-    
-      // Jinak klasicky z Firebase
+
       const media = await extractMediaPathsFromItem(item);
       setImages(media.images);
       setAudioUrl(media.audio);
@@ -55,20 +52,18 @@ export function MonumentDetailScreen() {
     loadMedia();
 
     return () => {
-      isMounted = false;
       if (currentSound) currentSound.unloadAsync();
     };
   }, [item]);
 
   useEffect(() => {
-    let isMounted = true;
     let currentSound: Audio.Sound | null = null;
 
     Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
       staysActiveInBackground: false,
       interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-      playsInSilentModeIOS: true, // Důležité pro iOS
+      playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
       interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false,
@@ -80,26 +75,21 @@ export function MonumentDetailScreen() {
           { uri: url },
           { shouldPlay: false },
           (status) => {
-            if (status.isLoaded && isMounted) {
+            if (status.isLoaded) {
               setDurationMillis(status.durationMillis || 0);
             }
           }
         );
-        if (isMounted) {
-          setSound(sound);
-          currentSound = sound;
-        }
+        setSound(sound);
+        currentSound = sound;
       } catch (e) {
         console.error("Failed to load audio", e);
       }
     };
 
-    if (audioUrl) {
-      loadAudio(audioUrl);
-    }
+    if (audioUrl) loadAudio(audioUrl);
 
     return () => {
-      isMounted = false;
       if (currentSound) currentSound.unloadAsync();
     };
   }, [audioUrl]);
@@ -172,7 +162,7 @@ export function MonumentDetailScreen() {
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <View style={styles.backContent}>
           <Text style={styles.backArrow}>‹</Text>
-          <Text style={styles.backText}>Zpátky</Text>
+          <Text style={styles.backText}>{t("back")}</Text>
         </View>
       </TouchableOpacity>
 
@@ -218,10 +208,10 @@ export function MonumentDetailScreen() {
         <Ionicons name="volume-high-outline" size={20} style={styles.icon} />
         <Ionicons name="bookmark-outline" size={20} style={styles.icon} />
         <TouchableOpacity style={styles.modelButton}>
-          <Text style={styles.modelButtonText}>Model</Text>
+          <Text style={styles.modelButtonText}>{t("model")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.modelButton} onPress={openMaps}>
-          <Text style={styles.modelButtonText}>Navigovat</Text>
+          <Text style={styles.modelButtonText}>{t("navigate")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -229,8 +219,8 @@ export function MonumentDetailScreen() {
         <Text style={styles.sectionTitle}>{item.title}</Text>
         <Text style={styles.description}>{item.description}</Text>
 
-        <Text style={styles.sectionTitle}>Historie</Text>
-        <Text style={styles.description}>{item.assets.text || "Informace zatím chybí."}</Text>
+        <Text style={styles.sectionTitle}>{t("history")}</Text>
+        <Text style={styles.description}>{item.assets.text || t("no_info_available")}</Text>
       </View>
 
       {audioUrl && (

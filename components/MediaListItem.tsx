@@ -1,24 +1,37 @@
 // components/MediaListItem.tsx
 import { useEffect, useState } from "react";
-import { TouchableOpacity, Text, Image, View, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, Image, View, StyleSheet, ActivityIndicator, Alert, Modal } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getMediaURL } from "../utils/getMediaURL";
-import { Ionicons } from "@expo/vector-icons";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { downloadMonumentAssets } from "../utils/downloadMonumentAssets";
-import NetInfo from "@react-native-community/netinfo"; // pro kontrolu dat/Wi-Fi
+import { downloadMysteryAssets } from "../utils/downloadMysteryAssets";
+import NetInfo from "@react-native-community/netinfo";
+import { addDownloadedMystery } from "../redux/dataSlice";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   item: any;
   type: "mystery" | "monument";
 }
 
-
 export function MediaListItem({ item, type }: Props) {
-  
   const navigation = useNavigation();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const { t } = useTranslation();
+
+  const dispatch = useAppDispatch();
+  const downloadedMonuments = useAppSelector((state) => state.data.downloadedMonuments);
+  const downloadedMysteries = useAppSelector((state) => state.data.downloadedMysteries);
+
+  const isDownloaded = type === "mystery"
+    ? downloadedMysteries.includes(item.id)
+    : downloadedMonuments.includes(item.id);
 
   useEffect(() => {
     const fetchImage = async () => {
@@ -31,82 +44,107 @@ export function MediaListItem({ item, type }: Props) {
     fetchImage();
   }, [item]);
 
-  const dispatch = useAppDispatch();
-  const downloadedMonuments = useAppSelector((state) => state.data.downloadedMonuments);
-
-  const isDownloaded = downloadedMonuments.includes(item.id);
-
   const handleDownload = async () => {
     const netInfo = await NetInfo.fetch();
 
     if (!netInfo.isConnected) {
-      alert("Nejsi připojený k internetu.");
+      Alert.alert(t("error"), t("no_internet"));
       return;
     }
 
     if (netInfo.type !== "wifi") {
-      alert("Stahování je povoleno jen přes Wi-Fi.");
+      Alert.alert(t("warning"), t("wifi_only"));
       return;
     }
 
     try {
-      await downloadMonumentAssets(item, dispatch);
-      alert("Obsah stažen.");
+      setModalVisible(true);
+      setLoading(true);
+      if (type === "mystery") {
+        await downloadMysteryAssets(item, dispatch);
+        Alert.alert(t("done"), t("mystery_downloaded"));
+      } else {
+        await downloadMonumentAssets(item, dispatch);
+        Alert.alert(t("done"), t("monument_downloaded"));
+      }
     } catch (e) {
-      alert("Chyba při stahování.");
+      Alert.alert(t("error"), t("download_failed"));
+    } finally {
+      setLoading(false);
+      setModalVisible(false);
     }
   };
 
+  const handlePress = async () => {
+    if (type === "mystery") {
+      navigation.navigate("MysteryDetail", { item });
+      return;
+    }
+
+    if (isDownloaded) {
+      navigation.navigate("MonumentDetail", { item });
+      return;
+    }
+
+    const netInfo = await NetInfo.fetch();
+
+    if (netInfo.type === "wifi" && netInfo.isConnected) {
+      navigation.navigate("MonumentDetail", { item });
+    } else {
+      Alert.alert(t("warning"), t("not_downloaded_wifi_required"));
+    }
+  };
 
   return (
     <TouchableOpacity
       style={styles.card}
-      onPress={async () => {
-        if (type === "mystery") {
-          navigation.navigate("MysteryDetail", { item });
-          return;
-        }
-      
-        if (isDownloaded) {
-          navigation.navigate("MonumentDetail", { item });
-          return;
-        }
-      
-        const netInfo = await NetInfo.fetch();
-      
-        if (netInfo.type === "wifi" && netInfo.isConnected) {
-          navigation.navigate("MonumentDetail", { item });
-        } else {
-          alert("Obsah není stažený a nejsi na Wi-Fi. Stáhni si ho nejprve.");
-        }
-      }}
-    
+      onPress={handlePress}
       activeOpacity={0.8}
     >
       {imageUrl && <Image source={{ uri: imageUrl }} style={styles.cardImage} />}
       <View style={styles.cardContent}>
-        <Text style={styles.cardTitle}>{item.title}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <Text style={styles.cardTitle}>{item.title}</Text>
+        </View>
         <Text numberOfLines={2} style={styles.cardDescription}>{item.description}</Text>
-        {type === "mystery" && (
-          <View style={styles.distanceRow}>
-            <Text style={styles.distanceIcon}>🧭</Text>
-            <Text style={styles.distanceText}>{item.duration}</Text>
-          </View>
-        )}
-        {type === "monument" && item.distance && (
-          <View style={styles.distanceRow}>
-            <Text style={styles.distanceIcon}>📍</Text>
-            <Text style={styles.distanceText}>{item.distance}</Text>
-          </View>
-        )}
+        <View style={styles.distanceBetween}>
+          {type === "mystery" && (
+            <View style={styles.distanceRow}>
+              <Text style={styles.distanceIcon}>🧭</Text>
+              <Text style={styles.distanceText}>{item.duration}</Text>
+            </View>
+          )}
+          {type === "monument" && item.distance && (
+            <View style={styles.distanceRow}>
+              <Text style={styles.distanceIcon}>📍</Text>
+              <Text style={styles.distanceText}>{item.distance}</Text>
+            </View>
+          )}
+          <TouchableOpacity onPress={handleDownload} style={{ marginLeft: 8 }}>
+            <Icon
+              name={isDownloaded ? "cloud-check-outline" : "cloud-download-outline"}
+              size={24}
+              color={isDownloaded ? "green" : "#999"}
+              style={{ marginLeft: 8 }}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity onPress={handleDownload} style={{ position: "absolute", top: 8, right: 8 }}>
-        <Ionicons
-          name={isDownloaded ? "checkmark-done-circle-outline" : "cloud-download-outline"}
-          size={24}
-          color={isDownloaded ? "green" : "black"}
-        />
-      </TouchableOpacity>
+
+      {/* Modal s nápisem "Stahuji…" nebo "Downloading…" */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <ActivityIndicator size="large" color="black" />
+            <Text style={styles.modalText}>{t("downloading")}</Text>
+          </View>
+        </View>
+      </Modal>
     </TouchableOpacity>
   );
 }
@@ -120,4 +158,8 @@ const styles = StyleSheet.create({
   distanceRow: { flexDirection: "row", alignItems: "center" },
   distanceIcon: { fontSize: 14, marginRight: 4 },
   distanceText: { fontSize: 14, fontWeight: "bold" },
+  distanceBetween: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginRight: "5%" },
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "center", alignItems: "center" },
+  modalBox: { backgroundColor: "white", padding: 24, borderRadius: 12, alignItems: "center" },
+  modalText: { marginTop: 12, fontSize: 16, fontWeight: "bold" }
 });

@@ -1,9 +1,9 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
-import { RootState } from './store';
+// // redux/dataSlice.ts
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "./firebase";
+import { RootState } from "./store";
 
-// Typy pro data
 interface Monument {
   id: string;
   title: string;
@@ -20,6 +20,7 @@ interface Mystery {
 }
 
 interface DataState {
+  downloadedMysteries: string[];
   mysteries: Mystery[];
   monuments: Monument[];
   downloadedMonuments: string[];
@@ -27,43 +28,47 @@ interface DataState {
   error: string | null;
 }
 
-// Async thunk pro načtení dat
 export const fetchMetadata = createAsyncThunk(
-  'data/fetchMetadata',
+  "data/fetchMetadata",
   async (_, { getState }) => {
     const state = getState() as RootState;
-    const lang = state.language.currentLanguage; // např. 'cz', 'en', 'de'
+    const lang = state.language.currentLanguage;
 
     const mysteriesSnap = await getDocs(collection(db, `mysteries_${lang}`));
     const monumentsSnap = await getDocs(collection(db, `monuments_${lang}`));
 
     const mysteries = mysteriesSnap.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
 
     const monuments = monumentsSnap.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
 
     return { mysteries, monuments };
   }
 );
 
-// Slice
 const initialState: DataState = {
+  downloadedMysteries: [],
   mysteries: [],
   monuments: [],
   downloadedMonuments: [],
   loading: false,
-  error: null
+  error: null,
 };
 
 const dataSlice = createSlice({
-  name: 'data',
+  name: "data",
   initialState,
   reducers: {
+    addDownloadedMystery: (state, action: PayloadAction<string>) => {
+      if (!state.downloadedMysteries.includes(action.payload)) {
+        state.downloadedMysteries.push(action.payload);
+      }
+    },
     addDownloadedMonument: (state, action: PayloadAction<string>) => {
       if (!state.downloadedMonuments.includes(action.payload)) {
         state.downloadedMonuments.push(action.payload);
@@ -83,11 +88,10 @@ const dataSlice = createSlice({
       })
       .addCase(fetchMetadata.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Došlo k chybě při načítání dat.';
+        state.error = action.error.message || "Došlo k chybě při načítání dat.";
       });
-  }
+  },
 });
 
-// Exporty
-export const { addDownloadedMonument } = dataSlice.actions;
+export const { addDownloadedMystery, addDownloadedMonument } = dataSlice.actions;
 export default dataSlice.reducer;

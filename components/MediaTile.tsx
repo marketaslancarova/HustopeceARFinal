@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TouchableOpacity, Text, Image, View, StyleSheet } from "react-native";
 import { getMediaURL } from "../utils/getMediaURL"; // Adjust the import path as necessary
 import { useNavigation } from "@react-navigation/native";
-
+import { useTranslation } from "react-i18next";
 interface MediaTileProps {
   item: any;
   mediaPath: string;
@@ -11,6 +11,7 @@ interface MediaTileProps {
 }
 
 export function MediaTile({ item, mediaPath, buttonColor, navigateTo }: MediaTileProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ export function MediaTile({ item, mediaPath, buttonColor, navigateTo }: MediaTil
       <Text style={styles.tileTitle}>{item.title}</Text>
       <Text style={styles.tileDescription} numberOfLines={3}>{item.description}</Text>
       <TouchableOpacity style={[styles.tileButton, { backgroundColor: buttonColor }]} onPress={() => navigation.navigate(navigateTo, { item })}>
-        <Text style={styles.tileButtonText}>Zjistit více</Text>
+        <Text style={styles.tileButtonText}>{t("more")}</Text>
       </TouchableOpacity>
     </TouchableOpacity>
   );
