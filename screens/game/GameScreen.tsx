@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Text, ImageBackground } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import IntroScreen from "../game/components/steps/IntroStep";
 import StoryScreen from "../game/components/steps/StoryStep";

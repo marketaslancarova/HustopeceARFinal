@@ -1,5 +1,6 @@
 // components/steps/ResultStep.tsx
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function ResultScreen({ data, nextStep }: any) {
   return (
@@ -27,55 +28,53 @@ const styles = StyleSheet.create({
     backgroundColor: '#EADBC8',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24
+    padding: wp('6%'),
   },
   owl: {
-    width: 200,
-    height: 200,
+    width: wp('50%'),
+    height: wp('50%'),
     resizeMode: 'contain',
-    marginBottom: 20
+    marginBottom: hp('2.5%'),
   },
   speechBubble: {
     backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 20,
-    marginBottom: 10,
+    padding: wp('4%'),
+    borderRadius: wp('5%'),
+    marginBottom: hp('1.5%'),
     borderColor: '#D6C3AC',
     borderWidth: 2,
-    width: '90%',
+    width: wp('90%'),
     elevation: 5,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-
   },
   title: {
-    fontSize: 22,
+    fontSize: wp('5.5%'),
     fontWeight: 'bold',
     color: '#3E2723',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: hp('1.2%'),
   },
   bubbleText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     color: '#3E2723',
     textAlign: 'center',
-    
   },
   button: {
     backgroundColor: '#FFD54F',
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: 30,
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('10%'),
+    borderRadius: wp('8%'),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    elevation: 3
+    elevation: 3,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     color: '#3E2723',
     fontWeight: 'bold',
-  }
+  },
 });

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function TaskStep({ data, nextStep }: any) {
   const [selected, setSelected] = useState<string | null>(null);
@@ -40,44 +41,45 @@ export default function TaskStep({ data, nextStep }: any) {
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4ECD8',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: wp('5%'),
   },
   topContent: {
     alignItems: 'center',
     width: '100%',
   },
   owl: {
-    width: 140,
-    height: 140,
+    width: wp('35%'),
+    height: wp('35%'),
     resizeMode: 'contain',
-    marginBottom: 16,
+    marginBottom: hp('2%'),
   },
   question: {
-    fontSize: 20,
+    fontSize: wp('5%'),
     color: '#3E2723',
     textAlign: 'center',
-    marginBottom: 20,
-    fontStyle: 'italic'
+    marginBottom: hp('2.5%'),
+    fontStyle: 'italic',
   },
   optionButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 20,
+    paddingVertical: hp('1.8%'),
+    paddingHorizontal: wp('5%'),
+    borderRadius: wp('5%'),
     backgroundColor: '#FFF8DC',
     borderColor: '#BDB76B',
     borderWidth: 1,
-    marginVertical: 6,
-    minWidth: '70%',
+    marginVertical: hp('0.8%'),
+    minWidth: wp('70%'),
     alignItems: 'center',
   },
   optionText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     color: '#4B3B2A',
     fontWeight: '600',
   },
@@ -89,12 +91,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#FFD12C',
-    padding: 14,
-    borderRadius: 20,
-    marginTop: 20,
+    padding: hp('2%'),
+    borderRadius: wp('5%'),
+    marginTop: hp('2.5%'),
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: 'bold',
   },
 });

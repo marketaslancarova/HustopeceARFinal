@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Audio } from 'expo-av';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function FinishedScreen({ data, nextStep }: any) {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
@@ -80,26 +81,98 @@ export default function FinishedScreen({ data, nextStep }: any) {
 }
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  container: { flex: 1, justifyContent: 'space-between', alignItems: 'center', padding: 20 },
-  topContent: { marginTop: 40, alignItems: 'center' },
+  background: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: wp('5%'),
+  },
+  topContent: {
+    marginTop: hp('5%'),
+    alignItems: 'center',
+  },
   textBubble: {
-    backgroundColor: '#D2B48C', borderRadius: 20, padding: 20, maxWidth: '90%',
-    elevation: 5, shadowColor: '#000', shadowOpacity: 0.2, shadowOffset: { width: 0, height: 2 }, shadowRadius: 4,
+    backgroundColor: '#D2B48C',
+    borderRadius: wp('5%'),
+    padding: wp('5%'),
+    maxWidth: wp('90%'),
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
-  title: { fontSize: 24, fontWeight: 'bold', color: '#4B3B2A', textAlign: 'center', marginBottom: 10 },
-  text: { fontSize: 18, color: '#4B3B2A', textAlign: 'center' },
-  owl: { width: 200, height: 200, resizeMode: 'contain', marginBottom: 20 },
-  containerPlayerButton: { justifyContent: 'flex-end', alignItems: 'center', width: '100%', marginBottom: '10%' },
+  title: {
+    fontSize: wp('6.5%'),
+    fontWeight: 'bold',
+    color: '#4B3B2A',
+    textAlign: 'center',
+    marginBottom: hp('1.5%'),
+  },
+  text: {
+    fontSize: wp('4.5%'),
+    color: '#4B3B2A',
+    textAlign: 'center',
+  },
+  owl: {
+    width: wp('50%'),
+    height: wp('50%'),
+    resizeMode: 'contain',
+    marginBottom: hp('2.5%'),
+  },
+  containerPlayerButton: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: hp('10%'),
+  },
   audioPlayer: {
-    flexDirection: 'row', backgroundColor: '#5C3A1E', padding: 10, borderRadius: 30,
-    alignItems: 'center', justifyContent: 'center', width: '90%',
+    flexDirection: 'row',
+    backgroundColor: '#5C3A1E',
+    padding: wp('3%'),
+    borderRadius: wp('8%'),
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: wp('90%'),
   },
-  progressBarContainer: { flex: 1, height: 6, backgroundColor: '#D2B48C', borderRadius: 3, marginHorizontal: 10 },
-  progressBarFill: { height: 6, backgroundColor: '#B4CC5B', borderRadius: 3 },
-  icon: { fontSize: 24, color: '#FFF' },
-  timeWrapper: { flexDirection: 'row', justifyContent: 'space-between', width: '90%', marginTop: 5, marginBottom: 10 },
-  time: { fontSize: 16, color: '#FFF' },
-  button: { backgroundColor: '#FFCC00', padding: 14, borderRadius: 20, marginTop: 20 },
-  buttonText: { fontSize: 16, fontWeight: 'bold' },
+  progressBarContainer: {
+    flex: 1,
+    height: hp('0.7%'),
+    backgroundColor: '#D2B48C',
+    borderRadius: wp('1%'),
+    marginHorizontal: wp('2.5%'),
+  },
+  progressBarFill: {
+    height: hp('0.7%'),
+    backgroundColor: '#B4CC5B',
+    borderRadius: wp('1%'),
+  },
+  icon: {
+    fontSize: wp('6%'),
+    color: '#FFF',
+  },
+  timeWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: wp('90%'),
+    marginTop: hp('0.7%'),
+    marginBottom: hp('1.5%'),
+  },
+  time: {
+    fontSize: wp('4%'),
+    color: '#FFF',
+  },
+  button: {
+    backgroundColor: '#FFCC00',
+    padding: hp('2%'),
+    borderRadius: wp('5%'),
+    marginTop: hp('2.5%'),
+  },
+  buttonText: {
+    fontSize: wp('4%'),
+    fontWeight: 'bold',
+  },
 });

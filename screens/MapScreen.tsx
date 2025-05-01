@@ -87,7 +87,6 @@ export function MapScreen() {
               longitude: location.longitude,
             }}
             onPress={() => handleMarkerPress(location.id)}
-            onCalloutPress={() => handleDetailNavigation(location)}
             onDeselect={() => setSelectedMarkerId(null)}
             image={
               selectedMarkerId === location.id
@@ -95,7 +94,7 @@ export function MapScreen() {
                 : require("../assets/icons/marker-default.png")
             }
           >
-            <Callout tooltip={false}>
+            <Callout onPress={() => handleDetailNavigation(location)}>
               <View style={styles.callout}>
                 <Image
                   source={
@@ -136,10 +135,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: "hidden",
     elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
   },
   calloutImage: {
     width: 90,

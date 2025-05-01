@@ -1,8 +1,9 @@
 // components/steps/MapStep.tsx
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity,Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 export default function MapScreen({ data, nextStep }: any) {
   const [location, setLocation] = useState<any>(null);
@@ -112,41 +113,43 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
   },
   map: {
-    flex: 1
+    flex: 1,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   icon: {
-    fontSize: 24
+    fontSize: wp('6%'),
   },
   buttonWrapper: {
-    paddingBottom: 50,
+    paddingBottom: hp('6%'),
     paddingTop: 0,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderColor: '#ccc',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   kidButton: {
     backgroundColor: '#FFB703',
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 30,
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('8%'),
+    marginBottom: Platform.OS === 'ios' ? hp('0.01%') : hp('6%'),
+    marginTop: Platform.OS === 'ios' ? hp('2%') : hp('1%'),
+    borderRadius: wp('8%'),
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    minWidth: 200,
-    alignItems: 'center'
+    minWidth: wp('50%'),
+    alignItems: 'center',
   },
   kidButtonText: {
     color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold'
-  }
+    fontSize: wp('5%'),
+    fontWeight: 'bold',
+  },
 });
