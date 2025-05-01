@@ -1,0 +1,80 @@
+[    {
+  "type": "intro",
+  "title": "Začátek dobrodružství",
+  "text": "Ahoj, já jsem Hermína! Na dobytčím trhu v Hustopečích někdo ukradl třicátkový svitek. Pomůžeš mi zjistit, kdo to byl?",
+  "audio": "intro.mp3"
+},
+  {
+    "type": "story",
+    "title": "Start: Náměstí – Tržiště",
+    "text": "Začíná pátrání!",
+    "audio": "intro.mp3",
+    "audioText": "Vítejte na hustopečském náměstí! Před stovkami let se tu konaly velké dobytčí trhy. Hustopeče měly zvláštní právo vybírat třicátkovou daň – z každých třiceti kusů dobytka jednu daň. Jenže teď je svitek, který toto právo potvrzoval, pryč! Vaším úkolem je najít stopy, odhalit zloděje a svitek získat zpět!"
+  },
+  {
+    "type": "task",
+    "taskType": "choice",
+    "question": "Jak se jmenovala daň, která se vybírala na hustopečských trzích?",
+    "correctAnswer": "Třicátková",
+    "options": ["Desátková", "Třicátková", "Padesátková"]
+  },
+  {
+    "type": "result",
+    "text": "Správně!",
+    "audio": "result1.mp3",
+    "audioText": "Skvěle! Bez třicátkové daně by trhy nemohly existovat. Místo, které chránilo úspěch trhů, je spojeno s vírou a modlitbou. Možná právě tam najdete další stopu..."
+  },
+  {
+    "type": "map",
+    "destination": "Kostel sv. Václava",
+    "latitude": 48.9375,
+    "longitude": 16.7340
+  },
+  {
+    "type": "story",
+    "title": "Kostel sv. Václava",
+    "text": "Stopa u kostela.",
+    "audio": "kostel.mp3",
+    "audioText": "Kostel sv. Václava je jedním z nejstarších míst ve městě. Kupci se tu modlili za zdraví dobytka a úspěšné obchody. Možná zde najdete další stopy vedoucí ke zloději."
+  },
+  {
+    "type": "task",
+    "taskType": "choice",
+    "question": "Kolik má anděl na kostele křídel?",
+    "correctAnswer": "2",
+    "options": ["1", "2", "4"]
+  },
+  {
+    "type": "result",
+    "text": "Výborně!",
+    "audio": "result2.mp3",
+    "audioText": "Výborně! Symbol ochrany byl vždy důležitou součástí trhů a obchodů. Kde se dobře jedlo, pilo a obchodovalo, tam se vždy schovávaly i největší poklady. Hledejte tam, kde se skrývalo víno!"
+  },
+  {
+    "type": "map",
+    "destination": "Sklepy",
+    "latitude": 48.9370,
+    "longitude": 16.7330
+  },
+  {
+    "type": "film",
+    "title": "Sklepy",
+    "text": "Tady se něco děje!",
+    "video": "Film.mp4",
+    "nextScreen": "TaskSklepy"
+  },
+  {
+    "type": "task",
+    "taskType": "choice",
+    "question": "Ve kterém sudu je schovaný svitek?",
+    "correctAnswer": "Sud s hustopečským erbem",
+    "options": ["Sud s růží", "Sud s hustopečským erbem", "Sud s podkovou"]
+  },
+  {
+    "type": "finished",
+    "title": "Děkujeme!",
+    "text": "Trhy mohou dále pokračovat!",
+    "audio": "finale.mp3",
+    "audioText": "Díky vám Hustopeče svitek získaly zpět. Trhy rostly a rostly a Hustopeče se staly centrem obchodu pro celou střední Evropu!"
+  }
+]
