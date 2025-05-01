@@ -1,9 +1,21 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, Alert, Modal } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+  Modal,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useEffect, useState } from "react";
 import NetInfo from "@react-native-community/netinfo";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import { getMediaURL } from "../utils/getMediaURL";
 import { getGameFlowAssets } from "../utils/getGameFlowAssets";
@@ -78,60 +90,64 @@ export function MysteryDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <View style={styles.backContent}>
-          <Text style={styles.backArrow}>‹</Text>
-          <Text style={styles.backText}>{t("back")}</Text>
-        </View>
-      </TouchableOpacity>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+          <View style={styles.backContent}>
+            <Text style={styles.backArrow}>‹</Text>
+            <Text style={styles.backText}>{t("back")}</Text>
+          </View>
+        </TouchableOpacity>
 
-      <Image source={{ uri: backgroundUrl }} style={styles.image} resizeMode="cover" />
+        <Image source={{ uri: backgroundUrl }} style={styles.image} resizeMode="cover" />
 
-      <View style={styles.content}>
-        <View style={styles.titleRow}>
-          <Text style={styles.title}>{item.title}</Text>
-          <TouchableOpacity onPress={handleDownload} disabled={isDownloaded}>
-            <Icon
-              name={isDownloaded ? "cloud-check-outline" : "cloud-download-outline"}
-              size={24}
-              color={isDownloaded ? "green" : "#999"}
-              style={{ marginLeft: 8 }}
-            />
+        <View style={styles.content}>
+          <View style={styles.titleRow}>
+            <Text style={styles.title}>{item.title}</Text>
+            <TouchableOpacity onPress={handleDownload} disabled={isDownloaded}>
+              <Icon
+                name={isDownloaded ? "cloud-check-outline" : "cloud-download-outline"}
+                size={hp('3%')}
+                color={isDownloaded ? "green" : "#999"}
+                style={{ marginLeft: wp('2%') }}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.description}>{item.description}</Text>
+
+          <View style={styles.infoRow}>
+            <View style={styles.infoItem}>
+              <Icon name="clock-outline" size={hp('3%')} color="#4B3621" />
+              <Text style={styles.infoText}>{item.duration}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Icon name="baby-face" size={hp('3%')} color="#4B3621" />
+              <Text style={styles.infoText}>{item.ageRange}</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Icon name="baby-carriage" size={hp('3%')} color="#4B3621" />
+              <Text style={styles.infoText}>
+                {item.strollerFriendly ? t("with_stroller") : t("without_stroller")}
+              </Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Icon name="map-marker-path" size={hp('3%')} color="#4B3621" />
+              <Text style={styles.infoText}>{t("stops", { count: item.stops })}</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.button} onPress={handleStartGame} disabled={loading}>
+            {loading ? <ActivityIndicator color="black" /> : <Text style={styles.buttonText}>{t("start")}</Text>}
           </TouchableOpacity>
         </View>
-
-        <Text style={styles.description}>{item.description}</Text>
-
-        <View style={styles.infoRow}>
-          <View style={styles.infoItem}>
-            <Icon name="clock-outline" size={24} color="#4B3621" />
-            <Text style={styles.infoText}>{item.duration}</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Icon name="baby-face" size={24} color="#4B3621" />
-            <Text style={styles.infoText}>{item.ageRange}</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Icon name="baby-carriage" size={24} color="#4B3621" />
-            <Text style={styles.infoText}>{item.strollerFriendly ? t("with_stroller") : t("without_stroller")}</Text>
-          </View>
-          <View style={styles.infoItem}>
-            <Icon name="map-marker-path" size={24} color="#4B3621" />
-            <Text style={styles.infoText}>{t("stops", { count: item.stops })}</Text>
-          </View>
-        </View>
-
-        <TouchableOpacity style={styles.button} onPress={handleStartGame} disabled={loading}>
-          {loading ? <ActivityIndicator color="black" /> : <Text style={styles.buttonText}>{t("start")}</Text>}
-        </TouchableOpacity>
-      </View>
+      </ScrollView>
 
       <Modal transparent visible={modalVisible} animationType="fade">
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
             <ActivityIndicator size="large" color="#000" />
-            <Text style={{ marginTop: 12 }}>{t("downloading")}</Text>
+            <Text style={{ marginTop: hp('1.5%') }}>{t("downloading")}</Text>
           </View>
         </View>
       </Modal>
@@ -140,21 +156,99 @@ export function MysteryDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFF8E1" },
-  image: { width: "100%", height: 250, backgroundColor: "#eee" },
-  content: { padding: 20 },
-  titleRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
-  title: { fontSize: 24, fontWeight: "bold", color: "#E65100" },
-  description: { fontSize: 16, color: "#5D4037", marginBottom: 20 },
-  button: { backgroundColor: '#FFCC00', borderRadius: 12, paddingVertical: 12, alignItems: "center" },
-  buttonText: { color: "black", fontSize: 18, fontWeight: "bold" },
-  backContent: { flexDirection: 'row', alignItems: 'center' },
-  backArrow: { fontSize: 32, color: 'black', marginRight: -2, marginTop: -5 },
-  backText: { marginLeft: 8, fontSize: 16, fontWeight: "bold" },
-  backButton: { marginTop: 20, marginLeft: 16, marginBottom: 10 },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20 },
-  infoItem: { alignItems: 'center', flex: 1 },
-  infoText: { fontSize: 14, marginTop: 4, color: '#4B3621' },
-  modalBackground: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: 'white', padding: 24, borderRadius: 12, alignItems: 'center' },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFF8E1",
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  image: {
+    width: wp('100%'),
+    height: hp('30%'),
+    backgroundColor: "#eee",
+  },
+  content: {
+    paddingHorizontal: wp('5%'),
+    paddingTop: hp('2%'),
+    paddingBottom: hp('4%'),
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: hp('2%'),
+  },
+  title: {
+    fontSize: hp('3%'),
+    fontWeight: "bold",
+    color: "#E65100",
+    flex: 1,
+    flexWrap: "wrap",
+  },
+  description: {
+    fontSize: hp('2%'),
+    color: "#5D4037",
+    marginBottom: hp('3%'),
+  },
+  button: {
+    backgroundColor: '#FFCC00',
+    borderRadius: wp('3%'),
+    paddingVertical: hp('1.8%'),
+    alignItems: "center",
+    marginTop: hp('2%'),
+  },
+  buttonText: {
+    color: "black",
+    fontSize: hp('2.2%'),
+    fontWeight: "bold",
+  },
+  backContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backArrow: {
+    fontSize: hp('4%'),
+    color: 'black',
+    marginRight: -2,
+    marginTop: -5,
+  },
+  backText: {
+    marginLeft: wp('2%'),
+    fontSize: hp('2%'),
+    fontWeight: "bold",
+  },
+  backButton: {
+    marginTop: hp('1.5%'),
+    marginLeft: wp('4%'),
+    marginBottom: hp('1%'),
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: hp('3%'),
+    flexWrap: 'wrap',
+  },
+  infoItem: {
+    alignItems: 'center',
+    flex: 1,
+    marginVertical: hp('1%'),
+  },
+  infoText: {
+    fontSize: hp('1.8%'),
+    marginTop: hp('0.8%'),
+    color: '#4B3621',
+    textAlign: 'center',
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: hp('3%'),
+    borderRadius: wp('4%'),
+    alignItems: 'center',
+  },
 });

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setLanguage } from '../redux/languageSlice';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 type MenuScreenProps = {
   onClose: () => void;
@@ -73,51 +74,58 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
-    paddingTop: 60,
-    paddingHorizontal: 24,
+    paddingTop: hp('7.5%'),
+    paddingHorizontal: wp('6%'),
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: hp('5%'),
   },
   logo: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: wp('10%'),
+    height: wp('10%'),
+    borderRadius: wp('5%'),
   },
   closeButton: {
-    padding: 8,
+    padding: wp('2%'),
   },
   closeIcon: {
-    width: 28,
-    height: 28,
+    width: wp('7%'),
+    height: wp('7%'),
   },
   menuItem: {
     borderBottomWidth: 1,
     borderBottomColor: "#5C873A",
-    paddingVertical: 20,
+    paddingVertical: hp('2.5%'),
   },
   menuText: {
-    fontSize: 18,
+    fontSize: wp('4.5%'),
     color: "#5C873A",
     fontWeight: "bold",
   },
-  title: { fontSize: 18, marginBottom: 20 },
-  buttonRow: { flexDirection: "row", gap: 10 },
+  title: {
+    fontSize: wp('4.5%'),
+    marginBottom: hp('2.5%'),
+  },
+  buttonRow: {
+    flexDirection: "row",
+    gap: wp('2.5%'),
+  },
   langButton: {
     backgroundColor: "#ddd",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: wp('4%'),
+    paddingVertical: hp('1%'),
+    borderRadius: wp('2%'),
   },
   selected: {
     backgroundColor: "#5C873A",
   },
   langText: {
-    fontSize: 16,
+    fontSize: wp('4%'),
     fontWeight: "600",
     color: "#000",
   },
 });
+

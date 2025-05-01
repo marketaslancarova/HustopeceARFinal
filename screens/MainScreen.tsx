@@ -1,7 +1,16 @@
 import { useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  FlatList,
+  TouchableOpacity
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { fetchMetadata } from '../redux/dataSlice';
@@ -14,18 +23,15 @@ export function MainScreen() {
 
   const dispatch = useAppDispatch();
   const { mysteries, monuments } = useAppSelector(state => state.data);
-
-  const language = useAppSelector((state) => state.language.currentLanguage); // 💡 jazyk z Reduxu
+  const language = useAppSelector((state) => state.language.currentLanguage);
 
   useEffect(() => {
-    dispatch(fetchMetadata()); // refetch při každé změně jazyka
+    dispatch(fetchMetadata());
   }, [dispatch, language]);
 
-  console.log("Mysteries from Redux:", mysteries);
-  console.log("Monuments from Redux:", monuments);
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 150 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: hp('20%') }}>
         <View style={styles.bannerContainer}>
           <Image source={require("../assets/icons/banner.png")} style={styles.bannerImage} />
           <View style={styles.bannerContent}>
@@ -92,12 +98,15 @@ export function MainScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#FFFFFF" },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF"
+  },
   bannerContainer: {
-    height: 260,
+    height: hp('32%'),
     position: "relative",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
+    borderBottomLeftRadius: wp('6%'),
+    borderBottomRightRadius: wp('6%'),
     overflow: "hidden"
   },
   bannerImage: {
@@ -111,67 +120,66 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   header: {
-    marginTop: 40,
-    marginHorizontal: 16,
+    marginTop: hp('4%'),
+    marginHorizontal: wp('4%'),
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center"
   },
   menuButton: {
-    width: 44,
-    height: 44,
+    width: wp('12%'),
+    height: wp('12%'),
     justifyContent: "center",
     alignItems: "center"
   },
   logo: {
-    width: 40,
-    height: 40,
+    width: wp('10%'),
+    height: wp('10%'),
     resizeMode: "contain"
   },
   menuIcon: {
-    width: 24,
-    height: 24,
+    width: wp('6%'),
+    height: wp('6%'),
     resizeMode: "contain"
   },
   bannerTextContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 20
+    paddingHorizontal: wp('4%'),
+    paddingBottom: hp('2%')
   },
   bannerText: {
     color: "white",
-    fontSize: 16,
+    fontSize: hp('1.7%'),
     fontWeight: "bold",
     backgroundColor: "rgba(0,0,0,0.4)",
-    padding: 10,
-    borderRadius: 12
+    padding: hp('1%'),
+    borderRadius: wp('3%')
   },
   section: {
-    marginTop: 24,
-    paddingHorizontal: 16
+    marginTop: hp('3%'),
+    paddingHorizontal: wp('4%')
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: hp('2.8%'),
     fontWeight: "700",
-    fontFamily: "Lato",
-    marginBottom: 12,
+    marginBottom: hp('1.5%'),
     textAlign: "left",
     color: "#000"
   },
   listContent: {
-    paddingRight: 16
+    paddingRight: wp('4%')
   },
   linkTextOrange: {
     color: "#E3772E",
-    fontSize: 16,
+    fontSize: hp('1.9%'),
     fontWeight: "600",
-    marginTop: 12,
+    marginTop: hp('3.2%'),
     textDecorationLine: "underline"
   },
   linkTextGreen: {
     color: "#5C873A",
-    fontSize: 16,
+    fontSize: hp('2%'),
     fontWeight: "600",
-    marginTop: 12,
+    marginTop: hp('1.5%'),
     textDecorationLine: "underline"
   }
 });

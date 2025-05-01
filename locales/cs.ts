@@ -6,7 +6,7 @@ export default {
     banner_text: "Věděli jste, že Tomáš Garrigue Masaryk, první prezident Československa, studoval na hustopečském gymnáziu?",
     title_mysteries: "Záhady pro nejmenší",
     view_mysteries: "Prohlédnout okruhy...",
-    title_monuments: "Zaniklé památky",
+    title_monuments: "Památky",
     view_monuments: "Prohlédnout památky...",
     back: "Zpátky",
     search_placeholder: "Hledat",

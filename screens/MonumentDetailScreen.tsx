@@ -1,4 +1,17 @@
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Dimensions, Modal, Linking, Platform, Animated } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  Dimensions,
+  Modal,
+  Linking,
+  Platform,
+  Animated,
+  ScrollView
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,21 +21,22 @@ import { extractMediaPathsFromItem } from "../utils/extractMediaPathsFromItem";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { useTranslation } from "react-i18next";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 
 export function MonumentDetailScreen() {
   const navigation = useNavigation();
-  const route = useRoute<any>();
+  const route = useRoute();
   const { item } = route.params || {};
   const { t } = useTranslation();
 
-  const screenWidth = Dimensions.get('window').width;
-  const flatListRef = useRef<FlatList>(null);
+  const flatListRef = useRef(null);
 
-  const [images, setImages] = useState<string[]>([]);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [images, setImages] = useState([]);
+  const [audioUrl, setAudioUrl] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [durationMillis, setDurationMillis] = useState(0);
   const [positionMillis, setPositionMillis] = useState(0);
@@ -30,7 +44,7 @@ export function MonumentDetailScreen() {
   const [forwardOpacity] = useState(new Animated.Value(1));
 
   useEffect(() => {
-    let currentSound: Audio.Sound | null = null;
+    let currentSound = null;
 
     const loadMedia = async () => {
       const netInfo = await NetInfo.fetch();
@@ -57,7 +71,7 @@ export function MonumentDetailScreen() {
   }, [item]);
 
   useEffect(() => {
-    let currentSound: Audio.Sound | null = null;
+    let currentSound = null;
 
     Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
@@ -69,7 +83,7 @@ export function MonumentDetailScreen() {
       playThroughEarpieceAndroid: false,
     });
 
-    const loadAudio = async (url: string) => {
+    const loadAudio = async (url) => {
       try {
         const { sound } = await Audio.Sound.createAsync(
           { uri: url },
@@ -95,7 +109,7 @@ export function MonumentDetailScreen() {
   }, [audioUrl]);
 
   useEffect(() => {
-    let interval: any;
+    let interval;
     if (isPlaying) {
       interval = setInterval(async () => {
         if (sound) {
@@ -137,14 +151,14 @@ export function MonumentDetailScreen() {
     }
   };
 
-  const animateOpacity = (val: Animated.Value) => {
+  const animateOpacity = (val) => {
     Animated.sequence([
       Animated.timing(val, { toValue: 0.5, duration: 150, useNativeDriver: true }),
       Animated.timing(val, { toValue: 1, duration: 150, useNativeDriver: true }),
     ]).start();
   };
 
-  const formatTime = (millis: number) => {
+  const formatTime = (millis) => {
     const totalSeconds = Math.floor(millis / 1000);
     return `${Math.floor(totalSeconds / 60)}:${String(totalSeconds % 60).padStart(2, '0')}`;
   };
@@ -159,124 +173,134 @@ export function MonumentDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <View style={styles.backContent}>
-          <Text style={styles.backArrow}>‹</Text>
-          <Text style={styles.backText}>{t("back")}</Text>
-        </View>
-      </TouchableOpacity>
-
-      <View style={{ height: 200 }}>
-        <FlatList
-          ref={flatListRef}
-          data={images}
-          keyExtractor={(_, index) => index.toString()}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={(e) => setCurrentIndex(Math.floor(e.nativeEvent.contentOffset.x / screenWidth))}
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Image source={{ uri: item }} style={styles.image} />
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-
-      <Modal visible={modalVisible} transparent>
-        <View style={styles.modalBackground}>
-          <FlatList
-            data={images}
-            keyExtractor={(_, i) => i.toString()}
-            horizontal
-            pagingEnabled
-            initialScrollIndex={currentIndex}
-            getItemLayout={(_, i) => ({ length: screenWidth, offset: screenWidth * i, index: i })}
-            renderItem={({ item }) => (
-              <Image source={{ uri: item }} style={styles.imageFull} />
-            )}
-          />
-          <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-            <Ionicons name="close" size={36} color="white" />
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <View style={styles.backContent}>
+              <Text style={styles.backArrow}>‹</Text>
+              <Text style={styles.backText}>{t("back")}</Text>
+            </View>
           </TouchableOpacity>
-        </View>
-      </Modal>
 
-      <View style={styles.iconRow}>
-        <Ionicons name="location-outline" size={20} style={styles.icon} />
-        <Text style={styles.distance}>{item.distance || "?"} km</Text>
-        <Ionicons name="volume-high-outline" size={20} style={styles.icon} />
-        <Ionicons name="bookmark-outline" size={20} style={styles.icon} />
-        <TouchableOpacity style={styles.modelButton}>
-          <Text style={styles.modelButtonText}>{t("model")}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.modelButton} onPress={openMaps}>
-          <Text style={styles.modelButtonText}>{t("navigate")}</Text>
-        </TouchableOpacity>
+          <View style={{ height: hp('25%') }}>
+            <FlatList
+              ref={flatListRef}
+              data={images}
+              keyExtractor={(_, index) => index.toString()}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={(e) => setCurrentIndex(Math.floor(e.nativeEvent.contentOffset.x / wp('100%')))}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                  <Image source={{ uri: item }} style={styles.image} />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+
+          <Modal visible={modalVisible} transparent>
+            <View style={styles.modalBackground}>
+              <FlatList
+                data={images}
+                keyExtractor={(_, i) => i.toString()}
+                horizontal
+                pagingEnabled
+                initialScrollIndex={currentIndex}
+                getItemLayout={(_, i) => ({ length: wp('100%'), offset: wp('100%') * i, index: i })}
+                renderItem={({ item }) => (
+                  <Image source={{ uri: item }} style={styles.imageFull} />
+                )}
+              />
+              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                <Ionicons name="close" size={36} color="white" />
+              </TouchableOpacity>
+            </View>
+          </Modal>
+
+          <View style={styles.iconRow}>
+            <Ionicons name="location-outline" size={20} style={styles.icon} />
+            <Text style={styles.distance}>{item.distance || "?"} km</Text>
+            <Ionicons name="volume-high-outline" size={20} style={styles.icon} />
+            <Ionicons name="bookmark-outline" size={20} style={styles.icon} />
+            <TouchableOpacity style={styles.modelButton}>
+              <Text style={styles.modelButtonText}>{t("model")}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.modelButton} onPress={openMaps}>
+              <Text style={styles.modelButtonText}>{t("navigate")}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.content}>
+            <Text style={styles.sectionTitle}>{item.title}</Text>
+            <Text style={styles.description}>{item.description}</Text>
+
+            <Text style={styles.sectionTitle}>{t("history")}</Text>
+            <Text style={styles.description}>{item.assets.text || t("no_info_available")}</Text>
+          </View>
+        </ScrollView>
+
+        {audioUrl && (
+          <View style={styles.audioControlsFixed}>
+            <View style={styles.progressBar}>
+              <View style={[styles.progress, { width: durationMillis ? `${(positionMillis / durationMillis) * 100}%` : "0%" }]} />
+            </View>
+            <View style={styles.audioTimes}>
+              <Text style={styles.timeText}>{formatTime(positionMillis)}</Text>
+              <Text style={styles.timeText}>{formatTime(durationMillis)}</Text>
+            </View>
+            <View style={styles.audioButtons}>
+              <TouchableOpacity onPress={skipBackward}>
+                <Animated.View style={{ opacity: backOpacity }}>
+                  <Ionicons name="play-skip-back" size={32} />
+                </Animated.View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={playPauseAudio}>
+                <Ionicons name={isPlaying ? "pause" : "play"} size={32} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={skipForward}>
+                <Animated.View style={{ opacity: forwardOpacity }}>
+                  <Ionicons name="play-skip-forward" size={32} />
+                </Animated.View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
-
-      <View style={styles.content}>
-        <Text style={styles.sectionTitle}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-
-        <Text style={styles.sectionTitle}>{t("history")}</Text>
-        <Text style={styles.description}>{item.assets.text || t("no_info_available")}</Text>
-      </View>
-
-      {audioUrl && (
-        <View style={styles.audioControlsFixed}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progress, { width: durationMillis ? `${(positionMillis / durationMillis) * 100}%` : "0%" }]} />
-          </View>
-          <View style={styles.audioTimes}>
-            <Text style={styles.timeText}>{formatTime(positionMillis)}</Text>
-            <Text style={styles.timeText}>{formatTime(durationMillis)}</Text>
-          </View>
-          <View style={styles.audioButtons}>
-            <TouchableOpacity onPress={skipBackward}>
-              <Animated.View style={{ opacity: backOpacity }}>
-                <Ionicons name="play-skip-back" size={32} />
-              </Animated.View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={playPauseAudio}>
-              <Ionicons name={isPlaying ? "pause" : "play"} size={32} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={skipForward}>
-              <Animated.View style={{ opacity: forwardOpacity }}>
-                <Ionicons name="play-skip-forward" size={32} />
-              </Animated.View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
     </SafeAreaView>
   );
 }
 
-const screenWidth = Dimensions.get("window").width;
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "white" },
-  image: { width: screenWidth, height: 200, resizeMode: "cover" },
-  imageFull: { width: screenWidth, height: "100%", resizeMode: "contain", backgroundColor: "black" },
+  scrollContent: { paddingBottom: hp('20%') },
+  image: { width: wp('100%'), height: hp('25%'), resizeMode: "cover" },
+  imageFull: { width: wp('100%'), height: hp('100%'), resizeMode: "contain", backgroundColor: "black" },
   modalBackground: { flex: 1, backgroundColor: "black", justifyContent: "center", alignItems: "center" },
-  closeButton: { position: "absolute", top: 40, right: 20 },
-  backButton: { marginTop: 20, marginLeft: 16, marginBottom: 10 },
+  closeButton: { position: "absolute", top: hp('5%'), right: wp('5%') },
+  backButton: { marginTop: hp('2.5%'), marginLeft: wp('4%'), marginBottom: hp('1.5%') },
   backContent: { flexDirection: "row", alignItems: "center" },
-  backArrow: { fontSize: 32, marginRight: -2, marginTop: -5 },
-  backText: { marginLeft: 8, fontSize: 16, fontWeight: "bold" },
-  iconRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: 16, marginTop: 8, gap: 10, flexWrap: "wrap" },
-  icon: { marginRight: 4 },
-  distance: { marginRight: 8, fontSize: 14 },
-  modelButton: { borderWidth: 1, borderColor: "#5C873A", borderRadius: 8, paddingVertical: 4, paddingHorizontal: 12, marginLeft: 8 },
-  modelButtonText: { color: "#5C873A", fontWeight: "bold", fontSize: 14 },
-  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 150 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 4 },
-  description: { fontSize: 14, color: "#333", marginBottom: 16 },
-  audioControlsFixed: { position: "absolute", bottom: 70, width: "100%", backgroundColor: "#F5F5F5", paddingVertical: 9, alignItems: "center" },
-  progressBar: { height: 4, width: "80%", backgroundColor: "#ddd", borderRadius: 2, overflow: "hidden", marginBottom: 5, marginTop: 8 },
+  backArrow: { fontSize: wp('8%'), marginRight: wp('-0.5%'), marginTop: hp('-0.5%') },
+  backText: { marginLeft: wp('2%'), fontSize: wp('4.5%'), fontWeight: "bold" },
+  iconRow: { flexDirection: "row", alignItems: "center", paddingHorizontal: wp('4%'), marginTop: hp('1%'), gap: wp('2.5%'), flexWrap: "wrap" },
+  icon: { marginRight: wp('1%') },
+  distance: { marginRight: wp('2%'), fontSize: wp('3.5%') },
+  modelButton: { borderWidth: 1, borderColor: "#5C873A", borderRadius: wp('2%'), paddingVertical: hp('0.5%'), paddingHorizontal: wp('3%'), marginLeft: wp('2%') },
+  modelButtonText: { color: "#5C873A", fontWeight: "bold", fontSize: wp('3.5%') },
+  content: { paddingHorizontal: wp('4%'), paddingTop: hp('2%') },
+  sectionTitle: { fontSize: wp('4.5%'), fontWeight: "bold", marginBottom: hp('0.5%') },
+  description: { fontSize: wp('3.5%'), color: "#333", marginBottom: hp('2%') },
+  audioControlsFixed: {
+    backgroundColor: "#F5F5F5",
+    paddingVertical: hp('1.5%'),
+    paddingHorizontal: wp('4%'),
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+    marginBottom: Platform.OS === 'ios' ? hp('4%') : hp('9%')
+  },
+  progressBar: { height: hp('0.5%'), width: "100%", backgroundColor: "#ddd", borderRadius: hp('0.5%'), overflow: "hidden", marginBottom: hp('0.5%'), marginTop: hp('1%') },
   progress: { height: "100%", backgroundColor: "#5C873A" },
-  audioTimes: { width: "80%", flexDirection: "row", justifyContent: "space-between" },
-  timeText: { fontSize: 12, color: "#333" },
-  audioButtons: { flexDirection: "row", justifyContent: "center", gap: 30 },
+  audioTimes: { flexDirection: "row", justifyContent: "space-between" },
+  timeText: { fontSize: wp('3%'), color: "#333" },
+  audioButtons: { flexDirection: "row", justifyContent: "space-evenly", alignItems: "center", marginTop: hp('1.5%') },
 });

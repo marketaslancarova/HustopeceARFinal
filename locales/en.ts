@@ -6,7 +6,7 @@ export default {
     banner_text: "Did you know that Tomáš Garrigue Masaryk, the first president of Czechoslovakia, studied at the Hustopeče grammar school?",
     title_mysteries: "Mysteries for children",
     view_mysteries: "Explore Kids Routes...",
-    title_monuments: "Lost Monuments",
+    title_monuments: "Monuments",
     view_monuments: "Explore Monuments...",
     back: "Back",
     search_placeholder: "Search",
