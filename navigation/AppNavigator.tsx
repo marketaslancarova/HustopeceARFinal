@@ -10,12 +10,13 @@ import { MonumentDetailScreen } from "../screens/MonumentDetailScreen";
 import { MenuScreen } from "../screens/MenuScreen";
 import { MysteriesScreen } from "../screens/MysteriesScreen";
 import { MysteryDetailScreen } from "../screens/MysteryDetailScreen";
-import GameScreen  from "../screens/game/GameScreen";
+import GameScreen from "../screens/game/GameScreen";
 
+// Navigátor typy
 export type RootTabParamList = {
   HomeStack: undefined;
   MonumentsStack: undefined;
-  Map: undefined;
+  MapStack: undefined;
 };
 
 export type HomeStackParamList = {
@@ -25,7 +26,6 @@ export type HomeStackParamList = {
   MysteriesScreen: undefined;
   MysteryDetail: { item: any };
   GameScreen: undefined;
-  RoutesStack: undefined; // <<--- Přidat RoutesStack jako nový screen
 };
 
 export type MonumentsStackParamList = {
@@ -33,9 +33,16 @@ export type MonumentsStackParamList = {
   MonumentDetail: { item: any };
 };
 
+export type MapStackParamList = {
+  Map: undefined;
+  MonumentDetail: { item: any };
+};
+
+// Navigátory
 const Tab = createBottomTabNavigator<RootTabParamList>();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const MonumentsStack = createNativeStackNavigator<MonumentsStackParamList>();
+const MapStack = createNativeStackNavigator<MapStackParamList>();
 
 function HomeStackNavigator() {
   return (
@@ -46,8 +53,6 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="MysteriesScreen" component={MysteriesScreen} />
       <HomeStack.Screen name="MysteryDetail" component={MysteryDetailScreen} />
       <HomeStack.Screen name="GameScreen" component={GameScreen} />
-
-
     </HomeStack.Navigator>
   );
 }
@@ -61,6 +66,15 @@ function MonumentsStackNavigator() {
   );
 }
 
+function MapStackNavigator() {
+  return (
+    <MapStack.Navigator screenOptions={{ headerShown: false }}>
+      <MapStack.Screen name="Map" component={MapScreen} />
+      <MapStack.Screen name="MonumentDetail" component={MonumentDetailScreen} />
+    </MapStack.Navigator>
+  );
+}
+
 export function AppNavigator() {
   return (
     <Tab.Navigator
@@ -68,7 +82,7 @@ export function AppNavigator() {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused }) => {
           let iconName = "";
-          if (route.name === "Map") {
+          if (route.name === "MapStack") {
             iconName = focused ? "location" : "location-outline";
           } else if (route.name === "HomeStack") {
             iconName = focused ? "home" : "home-outline";
@@ -88,7 +102,7 @@ export function AppNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Map" component={MapScreen} />
+      <Tab.Screen name="MapStack" component={MapStackNavigator} />
       <Tab.Screen name="HomeStack" component={HomeStackNavigator} />
       <Tab.Screen name="MonumentsStack" component={MonumentsStackNavigator} />
     </Tab.Navigator>

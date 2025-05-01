@@ -6,14 +6,16 @@ import { getMediaURL } from "../utils/getMediaURL";
 import { fetchMetadata } from "../redux/dataSlice";
 import * as Location from "expo-location";
 import { calculateDistance } from "../utils/calculateDistance";
+import { useNavigation } from "@react-navigation/native";
 
 export function MapScreen() {
-  const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
+  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
   const [imageMap, setImageMap] = useState<{ [key: string]: string | null }>({});
   const [distanceMap, setDistanceMap] = useState<{ [key: string]: string }>({});
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
   const monuments = useAppSelector((state) => state.data.monuments);
 
   useEffect(() => {
@@ -58,8 +60,12 @@ export function MapScreen() {
     }
   }, [monuments]);
 
-  const handleMarkerPress = (id: number) => {
+  const handleMarkerPress = (id: string) => {
     setSelectedMarkerId(id);
+  };
+
+  const handleDetailNavigation = (monument: any) => {
+    navigation.navigate("MonumentDetail", { item: monument });
   };
 
   return (
@@ -81,6 +87,8 @@ export function MapScreen() {
               longitude: location.longitude,
             }}
             onPress={() => handleMarkerPress(location.id)}
+            onCalloutPress={() => handleDetailNavigation(location)}
+            onDeselect={() => setSelectedMarkerId(null)}
             image={
               selectedMarkerId === location.id
                 ? require("../assets/icons/marker-selected.png")
@@ -119,12 +127,8 @@ export function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  map: {
-    flex: 1,
-  },
+  container: { flex: 1 },
+  map: { flex: 1 },
   callout: {
     width: 250,
     flexDirection: "row",
