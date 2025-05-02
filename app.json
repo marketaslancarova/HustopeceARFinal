@@ -13,13 +13,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.marketslancarova.HustopeceAR"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#ffffff",
+        "minSdkVersion": 24
+      },
+      "package": "com.marketslancarova.HustopeceAR"
     },
     "web": {
       "favicon": "./assets/favicon.png"

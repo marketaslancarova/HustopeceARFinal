@@ -198,7 +198,7 @@ export function MonumentDetailScreen() {
               )}
             />
           </View>
-
+    
           <Modal visible={modalVisible} transparent>
             <View style={styles.modalBackground}>
               <FlatList
@@ -223,7 +223,7 @@ export function MonumentDetailScreen() {
             <Text style={styles.distance}>{item.distance || "?"} km</Text>
             <Ionicons name="volume-high-outline" size={20} style={styles.icon} />
             <Ionicons name="bookmark-outline" size={20} style={styles.icon} />
-            <TouchableOpacity style={styles.modelButton}>
+            <TouchableOpacity style={styles.modelButton} onPress={() => navigation.navigate('ARTest')} >
               <Text style={styles.modelButtonText}>{t("model")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modelButton} onPress={openMaps}>

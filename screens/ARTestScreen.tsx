@@ -1,0 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import { ArViewerView } from 'react-native-ar-viewer';
+
+const modelLinks = [
+  'https://github.com/nainglynndw/react-native-ar-viewer/releases/download/v1/AR-Code-1678076062111.usdz',
+  'https://github.com/nainglynndw/react-native-ar-viewer/releases/download/v1/Elk_Free.usdz',
+];
+
+export default function ARTestScreen() {
+  const [localModels, setLocalModels] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const downloadAndSaveModel = async (url: string): Promise<string> => {
+    const fileName = url.split('/').pop() || `${Date.now()}.usdz`;
+    const localPath = FileSystem.documentDirectory + fileName;
+
+    const fileInfo = await FileSystem.getInfoAsync(localPath);
+    if (!fileInfo.exists) {
+      await FileSystem.downloadAsync(url, localPath);
+    }
+
+    return localPath.replace('file://', ''); // Odstraní prefix pro AR viewer
+  };
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const paths = await Promise.all(modelLinks.map(downloadAndSaveModel));
+        setLocalModels(paths);
+      } catch (error) {
+        console.error('❌ Chyba při stahování modelů:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModels();
+  }, []);
+
+  if (loading || localModels.length === 0) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={styles.text}>Stahuji 3D modely…</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <ArViewerView
+        style={{ flex: 1 }}
+        model={localModels[0]} // Zobrazení prvního modelu
+        lightEstimation
+        manageDepth
+        allowRotate
+        allowScale
+        allowTranslate
+        disableInstantPlacement
+        planeOrientation="horizontal"
+        onStarted={() => console.log('✅ AR spuštěno')}
+        onEnded={() => console.log('🔚 AR ukončeno')}
+        onModelPlaced={() => console.log('📍 Model umístěn')}
+        onModelRemoved={() => console.log('❌ Model odstraněn')}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: 'black' },
+  loaderContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'black' },
+  text: { color: 'white', marginTop: 16 },
+});
