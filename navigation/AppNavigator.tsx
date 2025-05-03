@@ -12,6 +12,7 @@ import { MysteriesScreen } from "../screens/MysteriesScreen";
 import { MysteryDetailScreen } from "../screens/MysteryDetailScreen";
 import GameScreen from "../screens/game/GameScreen";
 import ARTestScreen from "../screens/ARTestScreen";
+import { Modal } from "react-native";
 
 // Navigátor typy
 export type RootTabParamList = {
@@ -55,7 +56,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="MysteriesScreen" component={MysteriesScreen} />
       <HomeStack.Screen name="MysteryDetail" component={MysteryDetailScreen} />
       <HomeStack.Screen name="GameScreen" component={GameScreen} />
-      <HomeStack.Screen name="ARTest" component={ARTestScreen} />
+      <HomeStack.Screen name="ARTest" component={ARTestScreen} options={{presentation:"fullScreenModal"}}/>
     </HomeStack.Navigator>
   );
 }
