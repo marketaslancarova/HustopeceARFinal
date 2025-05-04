@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 const modelLinks = [
   'https://github.com/nainglynndw/react-native-ar-viewer/releases/download/v1/AR-Code-1678076062111.usdz',
   'https://github.com/nainglynndw/react-native-ar-viewer/releases/download/v1/Elk_Free.usdz',
+  'https://github.com/marketaslancarova/HustopeceARFinal/releases/download/va/kostka3.usdz'
 ];
 
 export default function ARTestScreen() {
@@ -22,6 +23,7 @@ export default function ARTestScreen() {
     if (!fileInfo.exists) {
       await FileSystem.downloadAsync(url, localPath);
     }
+    console.log('✅ Model stažen:', localPath);
     return localPath.replace('file://', '');
   };
 
@@ -59,7 +61,7 @@ export default function ARTestScreen() {
       {/* 🔍 AR Viewer */}
       <ArViewerView
         style={{ flex: 1 }}
-        model={localModels[0]}
+        model={localModels[1]}
         lightEstimation
         manageDepth
         allowRotate
