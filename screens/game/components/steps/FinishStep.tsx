@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { Audio } from 'expo-av';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 
 export default function FinishedScreen({ data, nextStep }: any) {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [positionMillis, setPositionMillis] = useState(0);
   const [durationMillis, setDurationMillis] = useState(1);
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
@@ -71,8 +73,8 @@ export default function FinishedScreen({ data, nextStep }: any) {
               <Text style={styles.time}>{formatTime(durationMillis)}</Text>
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={nextStep}>
-              <Text style={styles.buttonText}>Dokončit</Text>
+            <TouchableOpacity style={styles.button} onPress={nextStep} testID='finish-button'>
+              <Text style={styles.buttonText}>{t('')}</Text>
             </TouchableOpacity>
           </View>
         )}

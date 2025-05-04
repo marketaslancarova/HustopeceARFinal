@@ -32,5 +32,6 @@ export default {
     history: "Historie",
     no_info_available: "Informace zatím chybí.",
     more:"Zjistit více",
+    finish_button: "Dokončit",
   };
   

@@ -32,5 +32,6 @@ export default {
     history: "History",
     no_info_available: "No information available.",
     more:"Learn more",
+    finish_button: "Finish",
   };
   

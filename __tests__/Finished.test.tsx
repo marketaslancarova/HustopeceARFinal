@@ -2,6 +2,17 @@ import React from 'react';
 import { render, fireEvent, act } from '@testing-library/react-native';
 import FinishedScreen from '../screens/game/components/steps/FinishStep';
 
+// variable for translations
+let mockedTranslation = '';
+
+// mock react-i18next
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: () => mockedTranslation,
+  }),
+}));
+
+// mock expo-av
 jest.mock('expo-av', () => {
   const playAsync = jest.fn();
   const pauseAsync = jest.fn();
@@ -30,21 +41,22 @@ const mockData = {
   audioUrl: 'audio.mp3',
 };
 
-describe('FinishedScreen', () => {
-  it('displays the correct text and calls nextStep when clicked.', async () => {
+describe.each([
+  ['cs', 'Dokončeno'],
+  ['en', 'Finish'],
+  ])('FinishedScreen in language %s', (lang, expectedText) => {
+  it(`shows "${expectedText}" and triggers nextStep`, async () => {
+    mockedTranslation = expectedText;
+
     const mockNext = jest.fn();
 
     const { getByText } = render(
       <FinishedScreen data={mockData} nextStep={mockNext} />
     );
 
-   
-    await act(async () => {
-      await Promise.resolve();
-    });
+    await act(async () => Promise.resolve());
 
-    fireEvent.press(getByText('End Game'));
-
-    expect(mockNext).toHaveBeenCalled();
+    fireEvent.press(getByText(expectedText));
+    expect(mockNext).toHaveBeenCalledTimes(1);
   });
 });
