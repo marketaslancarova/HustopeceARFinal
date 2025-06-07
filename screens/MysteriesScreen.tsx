@@ -42,7 +42,7 @@ export function MysteriesScreen() {
   );
 
   return (
-    <LinearGradient colors={["#FDD083", "#F5A623"]} style={styles.container}>
+    <LinearGradient colors={["#C45500", "#5E2900"]} style={styles.container}>
     <SafeAreaView style={styles.SafeArea}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <View style={styles.backContent}>

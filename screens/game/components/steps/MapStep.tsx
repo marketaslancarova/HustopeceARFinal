@@ -1,19 +1,31 @@
 // components/steps/MapStep.tsx
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity,Platform } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { useTranslation } from "react-i18next";
 
 export default function MapScreen({ data, nextStep }: any) {
   const [location, setLocation] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Přístup k poloze byl zamítnut');
+      if (status !== "granted") {
+        alert("Přístup k poloze byl zamítnut");
         return;
       }
 
@@ -47,20 +59,20 @@ export default function MapScreen({ data, nextStep }: any) {
         latitude: location.latitude,
         longitude: location.longitude,
         latitudeDelta: 0.002,
-        longitudeDelta: 0.002
+        longitudeDelta: 0.002,
       }
     : {
         latitude: data.latitude,
         longitude: data.longitude,
         latitudeDelta: 0.01,
-        longitudeDelta: 0.01
+        longitudeDelta: 0.01,
       };
 
   return (
     <View style={styles.container}>
       {loading ? (
         <View style={styles.centered}>
-          <ActivityIndicator size="large" color="#4B3621" />
+          <ActivityIndicator size="large" color="#F5EEDD" />
           <Text>Načítání polohy…</Text>
         </View>
       ) : (
@@ -69,9 +81,9 @@ export default function MapScreen({ data, nextStep }: any) {
             <Marker
               coordinate={{
                 latitude: data.latitude,
-                longitude: data.longitude
+                longitude: data.longitude,
               }}
-              title={data.destination || 'Cíl'}
+              title={data.destination || "Cíl"}
               description="Cíl mise"
             >
               <Text style={styles.icon}>🏰</Text>
@@ -80,7 +92,7 @@ export default function MapScreen({ data, nextStep }: any) {
 
           <View style={styles.buttonWrapper}>
             <TouchableOpacity style={styles.kidButton} onPress={nextStep}>
-              <Text style={styles.kidButtonText}>🎯 Dorazil jsem!</Text>
+              <Text style={styles.kidButtonText}>{t("map_continue")}</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -89,7 +101,12 @@ export default function MapScreen({ data, nextStep }: any) {
   );
 }
 
-function getDistanceFromLatLonInMeters(lat1: number, lon1: number, lat2: number, lon2: number) {
+function getDistanceFromLatLonInMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+) {
   const R = 6371000;
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
@@ -110,46 +127,46 @@ function deg2rad(deg: number) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: "#F5EEDD",
   },
   map: {
     flex: 1,
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
-    fontSize: wp('6%'),
+    fontSize: wp("6%"),
   },
   buttonWrapper: {
-    paddingBottom: hp('6%'),
+    paddingBottom: hp("6%"),
     paddingTop: 0,
-    backgroundColor: '#fff',
+    backgroundColor: "#F5EEDD",
     borderTopWidth: 1,
-    borderColor: '#ccc',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#ccc",
+    alignItems: "center",
+    justifyContent: "center",
   },
   kidButton: {
-    backgroundColor: '#FFB703',
-    paddingVertical: hp('2%'),
-    paddingHorizontal: wp('8%'),
-    marginBottom: Platform.OS === 'ios' ? hp('0.01%') : hp('6%'),
-    marginTop: Platform.OS === 'ios' ? hp('2%') : hp('1%'),
-    borderRadius: wp('8%'),
+    backgroundColor: "#FFB703",
+    paddingVertical: hp("2%"),
+    paddingHorizontal: wp("8%"),
+    marginBottom: Platform.OS === "ios" ? hp("0.01%") : hp("6%"),
+    marginTop: Platform.OS === "ios" ? hp("2%") : hp("1%"),
+    borderRadius: wp("8%"),
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    minWidth: wp('50%'),
-    alignItems: 'center',
+    minWidth: wp("50%"),
+    alignItems: "center",
   },
   kidButtonText: {
-    color: '#fff',
-    fontSize: wp('5%'),
-    fontWeight: 'bold',
+    color: "#fff",
+    fontSize: wp("5%"),
+    fontWeight: "bold",
   },
 });
